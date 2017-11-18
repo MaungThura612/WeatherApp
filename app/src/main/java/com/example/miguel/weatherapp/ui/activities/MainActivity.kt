@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView
 import com.example.miguel.weatherapp.ui.adapters.ForecastListAdapter
 import com.example.miguel.weatherapp.R
 import com.example.miguel.weatherapp.domain.commands.RequestForecastCommand
-import com.example.miguel.weatherapp.domain.model.Forecast
+import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.longToast
 import org.jetbrains.anko.toast
@@ -18,18 +18,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val forecastList = findViewById<RecyclerView>(R.id.forecast_list)
         forecastList.layoutManager = LinearLayoutManager(this)
 
         doAsync {
             val result = RequestForecastCommand("94943").execute()
             uiThread {
-                forecastList.adapter = ForecastListAdapter(result,object : ForecastListAdapter.OnItemClickListener{
-                    override fun invoke(forecast: Forecast) {
-                        toast(forecast.date)
-                    }
-
-                })
+                forecastList.adapter = ForecastListAdapter(result){ toast(it.date)}
                 longToast("Request performed") }
         }
 
