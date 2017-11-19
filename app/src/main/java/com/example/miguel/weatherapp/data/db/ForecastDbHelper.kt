@@ -1,9 +1,8 @@
-package com.example.miguel.weatherapp.data.database
+package com.example.miguel.weatherapp.data.db
 
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import com.example.miguel.weatherapp.ui.App
-import org.jetbrains.anko.db.ManagedSQLiteOpenHelper
 import org.jetbrains.anko.db.*
 
 class ForecastDbHelper(ctx: Context = App.instance) : ManagedSQLiteOpenHelper(ctx,ForecastDbHelper.DB_NAME,null, ForecastDbHelper.DB_VERSION) {

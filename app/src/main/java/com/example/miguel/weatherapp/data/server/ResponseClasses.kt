@@ -1,4 +1,4 @@
-package com.example.miguel.weatherapp.data
+package com.example.miguel.weatherapp.data.server
 
 /**
  *

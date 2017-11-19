@@ -1,4 +1,4 @@
-package com.example.miguel.weatherapp.data.database
+package com.example.miguel.weatherapp.data.db
 
 object CityForecastTable {
     val NAME = "CityForecast"
