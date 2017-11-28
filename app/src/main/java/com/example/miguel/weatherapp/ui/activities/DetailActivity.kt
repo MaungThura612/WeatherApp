@@ -1,11 +1,16 @@
 package com.example.miguel.weatherapp.ui.activities
 
+import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.widget.TextView
 import com.example.miguel.weatherapp.R
 import com.example.miguel.weatherapp.domain.commands.RequestDayForecastCommand
 import com.example.miguel.weatherapp.domain.model.Forecast
+import com.example.miguel.weatherapp.extensions.color
+import com.example.miguel.weatherapp.extensions.textColor
+import com.example.miguel.weatherapp.extensions.toDateString
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.jetbrains.anko.ctx
@@ -40,10 +45,13 @@ class DetailActivity : AppCompatActivity() {
 
     private fun bindWeather(vararg views: Pair<Int, TextView>) = views.forEach {
         it.second.text = "${it.first}º"
-        it.second.textColor = color(when (it.first) {
-            in -50..0 -> android.R.color.holo_red_dark
-            in 0..15 -> android.R.color.holo_orange_dark
-            else -> android.R.color.holo_green_dark
-        })
+        it.second.textColor = color(
+                when (it.first) {
+                    in -50..0 -> android.R.color.holo_red_dark
+                    in 0..15 -> android.R.color.holo_orange_dark
+                    else -> android.R.color.holo_green_dark
+                })
     }
+
+
 }
