@@ -35,9 +35,8 @@ interface ToolbarManger {
         toolbar.setNavigationOnClickListener { up() }
     }
 
-    fun createUpDrawable() = with(DrawerArrowDrawable(toolbar.ctx)){
+    fun createUpDrawable() = DrawerArrowDrawable(toolbar.ctx).apply {
         progress = 1f
-        this
     }
 
 
