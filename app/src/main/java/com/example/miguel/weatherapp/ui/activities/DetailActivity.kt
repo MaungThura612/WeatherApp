@@ -4,6 +4,7 @@ import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
+import android.support.v7.widget.Toolbar
 import android.widget.TextView
 import com.example.miguel.weatherapp.R
 import com.example.miguel.weatherapp.domain.commands.RequestDayForecastCommand
@@ -11,14 +12,18 @@ import com.example.miguel.weatherapp.domain.model.Forecast
 import com.example.miguel.weatherapp.extensions.color
 import com.example.miguel.weatherapp.extensions.textColor
 import com.example.miguel.weatherapp.extensions.toDateString
+import com.example.miguel.weatherapp.ui.ToolbarManger
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_detail.*
 import org.jetbrains.anko.ctx
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.find
 import org.jetbrains.anko.uiThread
 import java.text.DateFormat
 
-class DetailActivity : AppCompatActivity() {
+class DetailActivity : AppCompatActivity(), ToolbarManger {
+    override val toolbar: Toolbar by lazy { find<Toolbar>(R.id.toolbar) }
+
     companion object {
         val ID = "DetailActivity:id"
         val CITY_NAME = "DetailActivity:cityName"
@@ -28,7 +33,9 @@ class DetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
 
-        title = intent.getStringExtra(CITY_NAME)
+        initToolbar()
+        toolbarTitle = intent.getStringExtra(CITY_NAME)
+        enableHomeAsUp { onBackPressed() }
 
         doAsync {
             val result = RequestDayForecastCommand(intent.getLongExtra(ID, -1)).execute()
