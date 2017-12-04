@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import com.example.miguel.weatherapp.R
 import com.example.miguel.weatherapp.domain.commands.RequestForecastCommand
+import com.example.miguel.weatherapp.extensions.DelegatesExt
 import com.example.miguel.weatherapp.ui.ToolbarManger
 import com.example.miguel.weatherapp.ui.adapters.ForecastListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
@@ -17,6 +18,7 @@ import org.jetbrains.anko.uiThread
 class MainActivity : AppCompatActivity(), ToolbarManger {
 
     override val toolbar: Toolbar by lazy  {find<Toolbar>(R.id.toolbar)}
+    val zipCode: Long by DelegatesExt.preference(this, SettingsActivity.ZIP_CODE, SettingsActivity.DEFAULT_ZIP)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,18 +26,25 @@ class MainActivity : AppCompatActivity(), ToolbarManger {
         initToolbar()
         forecastList.layoutManager = LinearLayoutManager(this)
         attachToScroll(forecastList)
-        doAsync {
-            val result = RequestForecastCommand(94043).execute()
-            uiThread {
-                val adapter = ForecastListAdapter(result) {
-                    startActivity<DetailActivity>(DetailActivity.ID to it.id,
-                            DetailActivity.CITY_NAME to result.city)
-                }
-                forecastList.adapter = adapter
 
-                toolbarTitle = "${result.city} (${result.country})"
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadForecast()
+    }
+
+    private fun loadForecast() =  doAsync {
+        val result = RequestForecastCommand(zipCode).execute()
+        uiThread {
+            val adapter = ForecastListAdapter(result) {
+                startActivity<DetailActivity>(DetailActivity.ID to it.id,
+                        DetailActivity.CITY_NAME to result.city)
             }
-        }
+            forecastList.adapter = adapter
 
+            toolbarTitle = "${result.city} (${result.country})"
+        }
     }
 }
