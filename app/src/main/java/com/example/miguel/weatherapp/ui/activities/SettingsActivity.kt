@@ -24,6 +24,7 @@ class SettingsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         cityCode.setText(zipCode.toString())
 
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

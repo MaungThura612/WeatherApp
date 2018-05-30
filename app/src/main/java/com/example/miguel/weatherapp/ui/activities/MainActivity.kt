@@ -6,10 +6,15 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import com.example.miguel.weatherapp.R
 import com.example.miguel.weatherapp.domain.commands.RequestForecastCommand
+import com.example.miguel.weatherapp.domain.model.ForecastList
 import com.example.miguel.weatherapp.extensions.DelegatesExt
 import com.example.miguel.weatherapp.ui.ToolbarManger
 import com.example.miguel.weatherapp.ui.adapters.ForecastListAdapter
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.android.UI
+import kotlinx.coroutines.experimental.async
+import org.jetbrains.anko.coroutines.experimental.asReference
+import org.jetbrains.anko.coroutines.experimental.bg
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.startActivity
@@ -35,16 +40,19 @@ class MainActivity : AppCompatActivity(), ToolbarManger {
         loadForecast()
     }
 
-    private fun loadForecast() =  doAsync {
-        val result = RequestForecastCommand(zipCode).execute()
-        uiThread {
-            val adapter = ForecastListAdapter(result) {
-                startActivity<DetailActivity>(DetailActivity.ID to it.id,
-                        DetailActivity.CITY_NAME to result.city)
-            }
-            forecastList.adapter = adapter
+    private fun loadForecast() =  async(UI) {
+        val result = bg { RequestForecastCommand(zipCode).execute() }
+        updateUI(result.await())
 
-            toolbarTitle = "${result.city} (${result.country})"
+    }
+
+    private fun updateUI(result: ForecastList) {
+        val adapter = ForecastListAdapter(result) {
+            startActivity<DetailActivity>(DetailActivity.ID to it.id,
+                    DetailActivity.CITY_NAME to result.city)
         }
+        forecastList.adapter = adapter
+
+        toolbarTitle = "${result.city} (${result.country})"
     }
 }
